@@ -25,10 +25,10 @@ const AdminUploadPage: React.FC = () => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
-    formData.append('file', image);
+    formData.append('image', image);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/upload`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/upload`, {
         method: 'POST',
         body: formData,
       });

@@ -18,7 +18,6 @@ export async function GET(req: Request) {
 
   try {
     const presignedUrl = await s3.getSignedUrlPromise('getObject', params);
-    console.log('Generated Pre-signed URL:', presignedUrl);
     return NextResponse.json({ url: presignedUrl });
   } catch (error) {
     console.error('Failed to generate Pre-signed URL:', error);
