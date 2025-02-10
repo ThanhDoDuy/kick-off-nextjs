@@ -12,7 +12,7 @@ interface Product {
 }
 
 const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(product.imageURL || null);
+  const [imageUrl] = useState<string | null>(product.imageURL || null);
   
   return (
     <div className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">

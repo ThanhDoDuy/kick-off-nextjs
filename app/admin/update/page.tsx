@@ -2,6 +2,7 @@
 
 import AdminAuth from '@/app/components/AdminAuth';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface Product {
   _id: string;
@@ -112,7 +113,13 @@ const AdminUpdatePage: React.FC = () => {
             {products.map((product) => (
               <tr key={product._id} className="border-t">
                 <td className="p-4">
-                  <img src={product.imageURL} alt={product.name} className="w-20 h-20 object-cover" />
+                  <Image
+                    src={product.imageURL}
+                    alt={product.name}
+                    width={80}
+                    height={80}
+                    className="rounded"
+                  />
                 </td>
                 <td className="p-4">
                   <input
