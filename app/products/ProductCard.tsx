@@ -1,57 +1,38 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import Image from 'next/image';
 
 interface Product {
+  _id: string;
   name: string;
   price: number;
-  image: string;  // File name (e.g., hoalan1.jpg)
-  imageUrl?: string;  // Optional URL (nếu có từ database)
+  image: string;
+  imageURL: string;
 }
 
-interface ProductCardProps {
-  product: Product;
-}
-
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const [imageUrl, setImageUrl] = useState<string | null>(product.imageUrl || null);  // Nếu có URL từ database, dùng luôn
-
-  useEffect(() => {
-    // Chỉ gọi API nếu chưa có Pre-signed URL
-    const fetchPresignedUrl = async () => {
-      if (!imageUrl) {
-        try {
-          const response = await fetch(`/api/s3-get-presigned?key=${product.image}`);
-          const data = await response.json();
-
-          if (data.url) {
-            setImageUrl(data.url);  // Cập nhật URL
-          }
-        } catch (error) {
-          console.error('Error fetching Pre-signed URL:', error);
-        }
-      }
-    };
-
-    fetchPresignedUrl();
-  }, [product.image, imageUrl]);
-
+const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(product.imageURL || null);
+  
   return (
     <div className="border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow">
+      {/* Chỉ render <Image> nếu imageUrl hợp lệ */}
       {imageUrl ? (
-        <img
+        <Image
           src={imageUrl}
           alt={product.name}
-          className="w-full h-[300px] object-cover"
+          width={200}
+          height={300}  // Cố định chiều cao ảnh
+          className="w-full h-[300px] object-cover rounded"
         />
       ) : (
         <div className="w-full h-[300px] flex items-center justify-center bg-gray-200">
           <p>Loading...</p>
         </div>
       )}
-      <div className="p-4">
+      <div className="p-4 flex flex-col justify-between">
         <h2 className="text-lg font-semibold">{product.name}</h2>
-        <p className="text-gray-600">${product.price}</p>
+        {/* <p className="text-gray-600">${product.price}</p> */}
       </div>
     </div>
   );
