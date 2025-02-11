@@ -81,7 +81,7 @@ const ProductCard: React.FC<{ product: Product }> = ({ product }) => {
           >
             Liên hệ chúng tôi
           </a>
-          <span className="ml-2">để được <span className="text-green-600 font-semibold">giá tốt nhất</span> nha</span>
+          <span className="ml-2">để được <span className="text-green-600 font-semibold">giá tốt nhất</span></span>
         </h2>
       </div>
     </div>
