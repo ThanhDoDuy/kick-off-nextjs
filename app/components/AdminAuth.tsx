@@ -3,6 +3,16 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+// Hàm hash key bằng SHA-256
+async function hashKey(key: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(key);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 interface AdminAuthProps {
   children: React.ReactNode;
 }
@@ -13,16 +23,17 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   const router = useRouter();
 
   useEffect(() => {
-    // Kiểm tra key từ localStorage
-    const storedKey = localStorage.getItem('adminKey');
-    if (storedKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
-      setAuthorized(true);  // Nếu key đúng, cho phép truy cập
+    // Kiểm tra hash key từ localStorage
+    const storedHash = localStorage.getItem('adminHash');
+    if (storedHash === process.env.NEXT_PUBLIC_ADMIN_HASH) {
+      setAuthorized(true);  // Nếu hash khớp, cho phép truy cập
     }
   }, []);
 
-  const handleKeySubmit = () => {
-    if (inputKey === process.env.NEXT_PUBLIC_ADMIN_KEY) {
-      localStorage.setItem('adminKey', inputKey);  // Lưu key vào localStorage
+  const handleKeySubmit = async () => {
+    const hashedInput = await hashKey(inputKey);
+    if (hashedInput === process.env.NEXT_PUBLIC_ADMIN_HASH) {
+      localStorage.setItem('adminHash', hashedInput);  // Lưu hash vào localStorage
       setAuthorized(true);
     } else {
       alert('Sai Admin Key. Vui lòng thử lại!');
@@ -30,7 +41,7 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ children }) => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('adminKey');  // Xóa key khỏi localStorage
+    localStorage.removeItem('adminHash');  // Xóa hash khỏi localStorage
     setAuthorized(false);  // Về lại trạng thái chưa đăng nhập
     router.push('/');  // Điều hướng về trang chính hoặc form đăng nhập
   };
