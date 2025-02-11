@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AdminAuth from '@/app/components/AdminAuth';
 
-const AdminUploadPage: React.FC = () => {
+const UploadProductPage = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const router = useRouter();
+  const router = useRouter();  // Khởi tạo router
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,32 +19,31 @@ const AdminUploadPage: React.FC = () => {
       return;
     }
 
-    setLoading(true);
-    setMessage('');
-
     const formData = new FormData();
     formData.append('name', name);
     formData.append('price', price);
-    formData.append('image', image);
+    formData.append('file', image);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/upload`, {
+      const res = await fetch('/api/products/upload', {
         method: 'POST',
         body: formData,
       });
 
+      const data = await res.json();
       if (res.ok) {
         setMessage('Upload thành công!');
-        router.push('/products');
+
+        // Điều hướng về trang /products sau 1 giây (nếu cần delay)
+        setTimeout(() => {
+          router.push('/products');
+        }, 1000);
       } else {
-        const data = await res.json();
-        setMessage(`Lỗi: ${data.error || 'Không thể upload sản phẩm'}`);
+        setMessage(`Lỗi: ${data.error}`);
       }
     } catch (error) {
       console.error('Error uploading product:', error);
       setMessage('Lỗi: Không thể kết nối đến server.');
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -83,12 +81,8 @@ const AdminUploadPage: React.FC = () => {
               required
             />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white font-semibold rounded disabled:opacity-50"
-          >
-            {loading ? 'Đang upload...' : 'Upload sản phẩm'}
+          <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-semibold rounded">
+            Upload sản phẩm
           </button>
         </form>
         {message && <p className="mt-4 text-lg">{message}</p>}
@@ -97,4 +91,4 @@ const AdminUploadPage: React.FC = () => {
   );
 };
 
-export default AdminUploadPage;
+export default UploadProductPage;

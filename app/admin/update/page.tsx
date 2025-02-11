@@ -17,11 +17,11 @@ const AdminUpdatePage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [editedProducts, setEditedProducts] = useState<{ [key: string]: string }>({});
 
-  // Fetch all products from backend
+  // Fetch all products from Next.js API
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/all`);
+        const response = await fetch('/api/products');
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
@@ -46,7 +46,7 @@ const AdminUpdatePage: React.FC = () => {
     if (!newName) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/${productId}`, {
+      const response = await fetch(`/api/products/${productId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -78,7 +78,7 @@ const AdminUpdatePage: React.FC = () => {
     if (!confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/product/${productId}`, {
+      const response = await fetch(`/api/products/${productId}`, {
         method: 'DELETE',
       });
 
